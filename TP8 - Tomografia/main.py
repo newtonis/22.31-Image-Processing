@@ -36,7 +36,7 @@ if __name__ == "__main__":
     oval1 = Oval(
         intensidad=1,
         inclinacion=45,
-        semiejeX=50,
+        semiejeX=60,
         semiejeY=100,
         centroX=350,
         centroY=300
@@ -47,7 +47,7 @@ if __name__ == "__main__":
         inclinacion=90,
         semiejeX=50,
         semiejeY=100,
-        centroX=250,
+        centroX=300,
         centroY=200
     )
 
