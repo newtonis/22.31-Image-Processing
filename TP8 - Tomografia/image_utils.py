@@ -49,11 +49,7 @@ class ImageFrame:
                 else:
                     float_img[i][j] /= how_to_norm[i][j]
                 
-                self.image[i][j] = int(np.interp(
-                    float_img[i][j],
-                    [-1, 1],
-                    [0, 255]
-                    ))
+                self.image[i][j] = int(np.interp(float_img[i][j], [-1, 1], [0, 255]))
 
     def __intensity2color(self, intensity):
         return int(np.interp(intensity, [-1, 1], [0, 255]))
