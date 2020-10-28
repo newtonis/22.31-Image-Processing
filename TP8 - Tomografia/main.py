@@ -43,7 +43,7 @@ if __name__ == "__main__":
     )
 
     oval2 = Oval(
-        intensidad=1,
+        intensidad=-0.999,
         inclinacion=90,
         semiejeX=50,
         semiejeY=100,
@@ -51,15 +51,25 @@ if __name__ == "__main__":
         centroY=200
     )
 
+    oval3 = Oval(
+        intensidad=-0.4,
+        inclinacion=90,
+        semiejeX=50,
+        semiejeY=100,
+        centroX=500,
+        centroY=450
+    )
+
     image_frame.add_oval(oval1)
     image_frame.add_oval(oval2)
+    image_frame.add_oval(oval3)
     image_frame.apply_ovals()
 
     fig = plt.figure(figsize=(14, 10))
     fig.add_subplot(1, 2, 1)
     plt.title('img')
-    cv2.imshow('img', image_frame.image)
-    cv2.waitKey(5000)
+    plt.imshow(image_frame.image, cmap='gray', vmin=0, vmax=255)
+    plt.show()
 
     # image_frame.clear_ovals()
 
