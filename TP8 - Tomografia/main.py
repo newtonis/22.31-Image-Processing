@@ -1,9 +1,8 @@
 import os; os.environ['DISPLAY'] = ':0' # LINEA DE CODIGO MAGICA:
 import tkinter as tk
-import matplotlib.pyplot as plt
-from image_utils import ImageFrame, Oval, np
-from skimage.transform import radon, iradon
-import cv2
+
+from image_utils import ImageFrame, Oval, cv2, iradon, np, plt, radon
+
 
 class Application(tk.Frame):
     """ https://wiki.python.org/moin/TkInter """
