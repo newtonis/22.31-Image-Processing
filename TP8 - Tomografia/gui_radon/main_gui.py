@@ -115,6 +115,11 @@ class MainWindow(QtWidgets.QMainWindow, Ui_MainWindow):
         self.lineEditiRadonHasta.setValidator(QtGui.QIntValidator(0,360))
 
 
+        self.comboBoxInterpolacion.addItems(['linear', 'nearest', 'cubic'])
+        self.comboBoxInterpolacion.currentIndexChanged.connect(self.selectionchangeInterpolacion)
+
+        self.comboBoxFiltro.addItems(['ramp', 'shepp-logan', 'cosine', 'hamming', 'hann'])
+        self.comboBoxFiltro.currentIndexChanged.connect(self.selectionchangeFiltro)
 
         #asignamos la funcion asociada al evento clicked en push buttons
         self.pushButtonAgregar.clicked.connect(self.onClickAgregar)
@@ -122,6 +127,23 @@ class MainWindow(QtWidgets.QMainWindow, Ui_MainWindow):
         
         self.pushButtonRadonCalcular.clicked.connect(self.onClickRadonCalcular)
         self.pushButtoniRadonCalcular.clicked.connect(self.onClickiRadonCalcular)
+
+    def selectionchangeInterpolacion(self,i):
+        pass
+#        print("Items in the list are :")
+            
+#        for count in range(self.comboBoxInterpolacion.count()):
+#            print(self.comboBoxInterpolacion.itemText(count))
+#        print("Current index",i,"selection changed ",self.comboBoxInterpolacion.currentText())
+
+    def selectionchangeFiltro(self,i):
+        pass
+#        print("Items in the list are :")        
+#        for count in range(self.comboBoxFiltro.count()):
+#            print(self.comboBoxFiltro.itemText(count))
+#        print("Current index",i,"selection changed ",self.comboBoxFiltro.currentText())
+        
+
 
     def onClickRadonCalcular(self):
         # print(self.displayed_radon.RadonAngulo)
@@ -134,7 +156,7 @@ class MainWindow(QtWidgets.QMainWindow, Ui_MainWindow):
     def onClickiRadonCalcular(self):
         theta = np.arange(self.displayed_iradon.iRadonDesde, self.displayed_iradon.iRadonHasta, self.displayed_iradon.iRadonPaso)
         sinogram = radon(self.image_frame.image, theta=theta, circle=True)
-        reconstruction_fbp = iradon(sinogram, theta=theta, circle=True)
+        reconstruction_fbp = iradon(sinogram, theta=theta, filter_name = self.comboBoxFiltro.currentText() ,interpolation =self.comboBoxInterpolacion.currentText(),circle=True )
         error = reconstruction_fbp - self.image_frame.image
         self.canvas_iradon.axes.cla()
         self.canvas_iradon.axes.imshow(reconstruction_fbp, cmap=plt.cm.Greys_r)

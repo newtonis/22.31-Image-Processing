@@ -100,7 +100,7 @@
       </widget>
      </item>
      <item>
-      <widget class="QComboBox" name="comboBox"/>
+      <widget class="QComboBox" name="comboBoxInterpolacion"/>
      </item>
      <item>
       <widget class="QLabel" name="label_8">
@@ -110,7 +110,7 @@
       </widget>
      </item>
      <item>
-      <widget class="QComboBox" name="comboBox_2"/>
+      <widget class="QComboBox" name="comboBoxFiltro"/>
      </item>
     </layout>
    </widget>
