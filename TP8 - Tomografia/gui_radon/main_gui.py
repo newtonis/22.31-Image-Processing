@@ -148,14 +148,16 @@ class MainWindow(QtWidgets.QMainWindow, Ui_MainWindow):
     def onClickRadonCalcular(self):
         # print(self.displayed_radon.RadonAngulo)
         theta = np.arange(self.displayed_radon.RadonDesde, self.displayed_radon.RadonHasta,self.displayed_radon.RadonPaso)
-        sinogram = radon(self.image_frame.image, theta=theta, circle=True)
+        aux_float_image = self.image_frame.image.astype(np.float64)
+        sinogram = radon(aux_float_image, theta=theta, circle=True)
         self.canvas_radon.axes.cla()
         self.canvas_radon.axes.imshow(sinogram, cmap=plt.cm.Greys_r,extent=(0, 180, 0, sinogram.shape[0]), aspect='auto')
         self.canvas_radon.draw()
 
     def onClickiRadonCalcular(self):
         theta = np.arange(self.displayed_iradon.iRadonDesde, self.displayed_iradon.iRadonHasta, self.displayed_iradon.iRadonPaso)
-        sinogram = radon(self.image_frame.image, theta=theta, circle=True)
+        aux_float_image = self.image_frame.image.astype(np.float64) 
+        sinogram = radon(aux_float_image, theta=theta, circle=True)
         reconstruction_fbp = iradon(sinogram, theta=theta, filter_name = self.comboBoxFiltro.currentText() ,interpolation =self.comboBoxInterpolacion.currentText(),circle=True )
         error = reconstruction_fbp - self.image_frame.image
         self.canvas_iradon.axes.cla()
