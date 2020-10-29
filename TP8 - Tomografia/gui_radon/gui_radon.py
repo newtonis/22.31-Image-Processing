@@ -14,7 +14,8 @@ from PyQt5 import QtCore, QtGui, QtWidgets
 class Ui_MainWindow(object):
     def setupUi(self, MainWindow):
         MainWindow.setObjectName("MainWindow")
-        MainWindow.resize(714, 443)
+        MainWindow.resize(988, 600)
+        MainWindow.setMaximumSize(QtCore.QSize(988, 600))
         self.centralwidget = QtWidgets.QWidget(MainWindow)
         self.centralwidget.setObjectName("centralwidget")
         self.pushButtonBorrar = QtWidgets.QPushButton(self.centralwidget)
@@ -64,7 +65,7 @@ class Ui_MainWindow(object):
         self.lineEditCentroY.setObjectName("lineEditCentroY")
         MainWindow.setCentralWidget(self.centralwidget)
         self.menubar = QtWidgets.QMenuBar(MainWindow)
-        self.menubar.setGeometry(QtCore.QRect(0, 0, 714, 22))
+        self.menubar.setGeometry(QtCore.QRect(0, 0, 988, 22))
         self.menubar.setObjectName("menubar")
         self.menuGuiRadon = QtWidgets.QMenu(self.menubar)
         self.menuGuiRadon.setObjectName("menuGuiRadon")

@@ -1,30 +1,6 @@
 import os; os.environ['DISPLAY'] = ':0' # LINEA DE CODIGO MAGICA:
-import tkinter as tk
 
 from image_utils import ImageFrame, Oval, cv2, iradon, np, plt, radon
-
-
-class Application(tk.Frame):
-    """ https://wiki.python.org/moin/TkInter """
-    def __init__(self, master=None):
-        super().__init__(master)
-        self.master = master
-        self.pack()
-        self.create_widgets()
-
-    def create_widgets(self):
-        self.hi_there = tk.Button(self)
-        self.hi_there["text"] = "Hello World\n(click me)"
-        self.hi_there["command"] = self.say_hi
-        self.hi_there.pack(side="top")
-
-        self.quit = tk.Button(self, text="QUIT", fg="red",
-                              command=self.master.destroy)
-        self.quit.pack(side="bottom")
-
-    def say_hi(self):
-        print("hi there, everyone!")
-
 
 if __name__ == "__main__":
     # root = tk.Tk()
@@ -85,7 +61,3 @@ if __name__ == "__main__":
     plt.imshow(reconstruction_fbp, cmap=plt.cm.Greys_r)
     fig.tight_layout()
     plt.show()
-
-    # image_frame.clear_ovals()
-
-    # plt.imshow(image_frame.image)

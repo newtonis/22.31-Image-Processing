@@ -4,22 +4,21 @@ from matplotlib.backends.backend_qt5agg import FigureCanvasQTAgg as FigureCanvas
 from matplotlib.figure import Figure
 import numpy as np
 
-class Canvas(FigureCanvas):
-    def __init__(self, parent = None, width = 5, height = 5, dpi = 100):
+import matplotlib.pyplot as plt
+
+from image_utils import ImageFrame, Oval, cv2, iradon, np, plt, radon
+import random
+
+class MplCanvas(FigureCanvas):
+
+    def __init__(self, parent=None, width=5, height=4, dpi=100):
         fig = Figure(figsize=(width, height), dpi=dpi)
         self.axes = fig.add_subplot(111)
- 
-        FigureCanvas.__init__(self, fig)
+        super(MplCanvas, self).__init__(fig)
         self.setParent(parent)
- 
-        #self.plot()
- 
- 
-    def plot(self):
-        x = np.array([50, 30,40])
-        labels = ["Apples", "Bananas", "Melons"]
-        ax = self.figure.add_subplot(111)
-        ax.pie(x, labels=labels) 
+
+def elipseToOvals(Intensidad,SemiEjeX,SemiEjeY,CentroX,CentroY,Inclinacion):
+    return Oval(Intensidad, Inclinacion, SemiEjeX, SemiEjeY, CentroX, CentroY)
 
 class elipse():    
     def __init__(self,Intensidad = None,SemiEjeX=None,SemiEjeY=None,CentroX=None,CentroY=None,Inclinacion=None):
@@ -39,36 +38,50 @@ class MainWindow(QtWidgets.QMainWindow, Ui_MainWindow):
         QtWidgets.QMainWindow.__init__(self, *args, **kwargs)
         self.setupUi(self)
         
-        # top = 400
-        # left = 400
-        # width = 900
-        # height = 500
-        # self.setGeometry(top, left, width, height)
         self.elipse_list = []
-
         self.displayed_elipse = elipse()
+        self.image_frame = ImageFrame()
 
 
-        canvas = Canvas(self, width=3, height=2)
-        canvas.move(400,50)
+        self.canvas = MplCanvas(self, width=3, height=3, dpi=100)
+        self.canvas.move(400,50)
+
+        n_data = 50
+        self.xdata = list(range(n_data))
+        self.ydata = [random.randint(0, 10) for i in range(n_data)]
 
 
         #asignamos la funcion asociada al evento textChanged
-        self.lineEditIntensidad.textChanged.connect(self.textChangedIntensidad)
+        self.lineEditIntensidad.textChanged.connect(self.textChangedIntensidad) # double
         self.lineEditIntensidad.setValidator(QtGui.QDoubleValidator(1.0,-1.0,4))
+        
         self.lineEditSemiEjeX.textChanged.connect(self.textChangedSemiEjeX)
+        self.lineEditSemiEjeX.setValidator(QtGui.QIntValidator(-1000,1000))
+        
         self.lineEditSemiEjeY.textChanged.connect(self.textChangedSemiEjeY)
+        self.lineEditSemiEjeY.setValidator(QtGui.QIntValidator(-1000,1000))
+
+        
         self.lineEditCentroX.textChanged.connect(self.textChangedCentroX)
+        self.lineEditCentroX.setValidator(QtGui.QIntValidator(-1000,1000))
+
+        
         self.lineEditCentroY.textChanged.connect(self.textChangedCentroY)
-        self.lineEditInclinacion.textChanged.connect(self.textChangedInclinacion)
+        self.lineEditCentroY.setValidator(QtGui.QIntValidator(-1000,1000))
 
-        #self.textEditIntensidad.setVali
 
-#        self.pushButton.setText("Presióname")
+        self.lineEditInclinacion.textChanged.connect(self.textChangedInclinacion) # double
+        self.lineEditInclinacion.setValidator(QtGui.QDoubleValidator(1.0,-1.0,4))
+
         #asignamos la funcion asociada al evento clicked en push buttons
         self.pushButtonAgregar.clicked.connect(self.onClickAgregar)
         self.pushButtonBorrar.clicked.connect(self.onClickBorrar)
-
+    
+    def update_plot(self,image):
+        self.canvas.axes.cla()  # Clear the canvas.
+        self.canvas.axes.imshow(image)
+        # Trigger the canvas to update and redraw.
+        self.canvas.draw()
 
     def areAllParamsDisplayedValid(self):
         if(self.validateNumberIntensidad() and self.validateNumberSemiEjeX() and self.validateNumberSemiEjeY()
@@ -77,6 +90,13 @@ class MainWindow(QtWidgets.QMainWindow, Ui_MainWindow):
         else:
             return False
         #escribimos la funcion asociada al evento clicked en push buttons
+
+    def updateElipseGraphics(self):
+        for e in self.elipse_list:
+           currOval = elipseToOvals(e.Intensidad,e.SemiEjeX,e.SemiEjeY,e.CentroX,e.CentroY,e.Inclinacion)
+           self.image_frame.add_oval(currOval)
+        self.image_frame.apply_ovals()
+
     def onClickAgregar(self):
         if self.areAllParamsDisplayedValid():
             Intensidad = self.displayed_elipse.Intensidad
@@ -88,6 +108,9 @@ class MainWindow(QtWidgets.QMainWindow, Ui_MainWindow):
             new_elipse = elipse(Intensidad,SemiEjeX,SemiEjeY,CentroX,CentroY,Inclinacion)
             self.elipse_list.append(new_elipse)
             self.update_text()
+
+            self.updateElipseGraphics()
+            self.update_plot(self.image_frame.image)
         else:
             print("error en alguno de los parametros")
 
@@ -152,20 +175,25 @@ class MainWindow(QtWidgets.QMainWindow, Ui_MainWindow):
             input_number = float(self.lineEditIntensidad.text())
             self.displayed_elipse.Intensidad = input_number
     def textChangedSemiEjeX(self):
-        input_number = float(self.lineEditIntensidad.text())
-        self.displayed_elipse.SemiEjeX = input_number
+        if(len(self.lineEditSemiEjeX.text())!=0):
+            input_number = int(self.lineEditSemiEjeX.text())
+            self.displayed_elipse.SemiEjeX = input_number
     def textChangedSemiEjeY(self):
-        input_number = float(self.lineEditIntensidad.text())
-        self.displayed_elipse.SemiEjeY = input_number
+        if(len(self.lineEditSemiEjeY.text())!=0):
+            input_number = int(self.lineEditSemiEjeY.text())
+            self.displayed_elipse.SemiEjeY = input_number
     def textChangedCentroX(self):
-        input_number = float(self.lineEditIntensidad.text())
-        self.displayed_elipse.CentroX = input_number
+        if(len(self.lineEditCentroX.text())!=0):
+            input_number = int(self.lineEditCentroX.text())
+            self.displayed_elipse.CentroX = input_number
     def textChangedCentroY(self):
-        input_number = float(self.lineEditIntensidad.text())
-        self.displayed_elipse.CentroY = input_number
+        if(len(self.lineEditCentroY.text())!=0):
+            input_number = int(self.lineEditCentroY.text())
+            self.displayed_elipse.CentroY = input_number
     def textChangedInclinacion(self):
-        input_number = float(self.lineEditIntensidad.text())
-        self.displayed_elipse.Inclinacion = input_number
+        if(len(self.lineEditInclinacion.text())!=0):
+            input_number = float(self.lineEditInclinacion.text())
+            self.displayed_elipse.Inclinacion = input_number
         
 if __name__ == "__main__":
     app = QtWidgets.QApplication([])
