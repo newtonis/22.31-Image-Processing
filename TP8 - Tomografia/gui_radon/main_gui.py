@@ -96,20 +96,20 @@ class MainWindow(QtWidgets.QMainWindow, Ui_MainWindow):
         self.lineEditRadonDesde.textChanged.connect(self.textChangedRadonDesde)
         self.lineEditRadonDesde.setValidator(QtGui.QIntValidator(0,360))
 
-        self.lineEditRadonPaso.textChanged.connect(self.textChangedRadonPaso)
-        self.lineEditRadonPaso.setValidator(QtGui.QIntValidator(0,360))
-
+        self.lineEditRadonPaso.textChanged.connect(self.textChangedRadonPaso) # float
+        self.lineEditRadonPaso.setValidator(QtGui.QDoubleValidator(0.0,360.0,4,notation=QtGui.QDoubleValidator.StandardNotation))
+        
         self.lineEditRadonHasta.textChanged.connect(self.textChangedRadonHasta)
         self.lineEditRadonHasta.setValidator(QtGui.QIntValidator(0,360))
 
-        self.lineEditRadonAngulo.textChanged.connect(self.textChangedRadonAngulo)
-        self.lineEditRadonAngulo.setValidator(QtGui.QIntValidator(0,360))
+        self.lineEditRadonAngulo.textChanged.connect(self.textChangedRadonAngulo) # float
+        self.lineEditRadonAngulo.setValidator(QtGui.QDoubleValidator(0.0,360.0,4,notation=QtGui.QDoubleValidator.StandardNotation))
 
         self.lineEditiRadonDesde.textChanged.connect(self.textChangediRadonDesde)
         self.lineEditiRadonDesde.setValidator(QtGui.QIntValidator(0,360))
 
-        self.lineEditiRadonPaso.textChanged.connect(self.textChangediRadonPaso)
-        self.lineEditiRadonPaso.setValidator(QtGui.QIntValidator(0,360))
+        self.lineEditiRadonPaso.textChanged.connect(self.textChangediRadonPaso) # float
+        self.lineEditRadonAngulo.setValidator(QtGui.QDoubleValidator(0.0,360.0,4,notation=QtGui.QDoubleValidator.StandardNotation))
 
         self.lineEditiRadonHasta.textChanged.connect(self.textChangediRadonHasta)
         self.lineEditiRadonHasta.setValidator(QtGui.QIntValidator(0,360))
@@ -125,14 +125,14 @@ class MainWindow(QtWidgets.QMainWindow, Ui_MainWindow):
 
     def onClickRadonCalcular(self):
         # print(self.displayed_radon.RadonAngulo)
-        theta = np.linspace(self.displayed_radon.RadonDesde, self.displayed_radon.RadonHasta,self.displayed_radon.RadonPaso, endpoint=False)
+        theta = np.arange(self.displayed_radon.RadonDesde, self.displayed_radon.RadonHasta,self.displayed_radon.RadonPaso)
         sinogram = radon(self.image_frame.image, theta=theta, circle=True)
         self.canvas_radon.axes.cla()
         self.canvas_radon.axes.imshow(sinogram, cmap=plt.cm.Greys_r,extent=(0, 180, 0, sinogram.shape[0]), aspect='auto')
         self.canvas_radon.draw()
 
     def onClickiRadonCalcular(self):
-        theta = np.linspace(self.displayed_iradon.iRadonDesde, self.displayed_iradon.iRadonHasta, self.displayed_iradon.iRadonPaso, endpoint=False)
+        theta = np.arange(self.displayed_iradon.iRadonDesde, self.displayed_iradon.iRadonHasta, self.displayed_iradon.iRadonPaso)
         sinogram = radon(self.image_frame.image, theta=theta, circle=True)
         reconstruction_fbp = iradon(sinogram, theta=theta, circle=True)
         error = reconstruction_fbp - self.image_frame.image
@@ -291,7 +291,7 @@ class MainWindow(QtWidgets.QMainWindow, Ui_MainWindow):
             self.displayed_radon.RadonPaso = 0
         else:
             if(len(self.lineEditRadonPaso.text())!=0):
-                input_number = int(self.lineEditRadonPaso.text())
+                input_number = float(self.lineEditRadonPaso.text())
                 self.displayed_radon.RadonPaso = input_number
     def textChangedRadonHasta(self):
         if(self.lineEditRadonHasta.text()=='.'):
@@ -305,7 +305,7 @@ class MainWindow(QtWidgets.QMainWindow, Ui_MainWindow):
             self.displayed_radon.RadonAngulo = 0
         else:
             if(len(self.lineEditRadonAngulo.text())!=0):
-                input_number = int(self.lineEditRadonAngulo.text())
+                input_number = float(self.lineEditRadonAngulo.text())
                 self.displayed_radon.RadonAngulo = input_number
     def textChangediRadonDesde(self):
         if(self.lineEditiRadonDesde.text()=='.'):
@@ -319,7 +319,7 @@ class MainWindow(QtWidgets.QMainWindow, Ui_MainWindow):
             self.displayed_iradon.iRadonPaso = 0
         else:
             if(len(self.lineEditiRadonPaso.text())!=0):
-                input_number = int(self.lineEditiRadonPaso.text())
+                input_number = float(self.lineEditiRadonPaso.text())
                 self.displayed_iradon.iRadonPaso = input_number
     def textChangediRadonHasta(self):
         if(self.lineEditiRadonHasta.text()=='.'):

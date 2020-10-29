@@ -2,9 +2,9 @@ object_names = ['Intensidad','SemiEjeX','SemiEjeY','CentroX','CentroY','Inclinac
 object_names_type = ['float','int','int','int','int','float']
 
 radon_object_names = ['RadonDesde','RadonPaso','RadonHasta','RadonAngulo']
-radon_object_names_type = ['int','int','int','int']
+radon_object_names_type = ['int','float','int','float']
 iradon_object_names = ['iRadonDesde','iRadonPaso','iRadonHasta']
-iradon_object_names_type = ['int','int','int']
+iradon_object_names_type = ['int','float','int']
 
 object_names_push = ['Agregar','Borrar']
 
