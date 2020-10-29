@@ -33,6 +33,21 @@ class elipse():
         return (f"Int:{self.Intensidad},SemiEjeX:{self.SemiEjeX},SemiEjeY:{self.SemiEjeY},CX:{self.CentroX},CY:{self.CentroY},Inclin:{self.Inclinacion}")
 
 
+class radon_params():    
+    def __init__(self = None,RadonDesde = None,RadonPaso = None,RadonHasta = None,RadonAngulo = None):
+        self.RadonDesde = RadonDesde
+        self.RadonPaso = RadonPaso
+        self.RadonHasta = RadonHasta
+        self.RadonAngulo = RadonAngulo
+
+class iradon_params():    
+    def __init__(self = None,iRadonDesde = None,iRadonPaso = None,iRadonHasta = None,iRadonAngulo = None):
+        self.iRadonDesde = iRadonDesde
+        self.iRadonPaso = iRadonPaso
+        self.iRadonHasta = iRadonHasta
+        self.iRadonAngulo = iRadonAngulo
+
+
 class MainWindow(QtWidgets.QMainWindow, Ui_MainWindow):
     def __init__(self, *args, **kwargs):
         QtWidgets.QMainWindow.__init__(self, *args, **kwargs)
@@ -42,9 +57,17 @@ class MainWindow(QtWidgets.QMainWindow, Ui_MainWindow):
         self.displayed_elipse = elipse()
         self.image_frame = ImageFrame()
 
-
+        self.displayed_radon = radon_params()
+        self.displayed_iradon = iradon_params()
+        
         self.canvas = MplCanvas(self, width=3, height=3, dpi=100)
-        self.canvas.move(400,50)
+        self.canvas.move(350,25)
+        
+        self.canvas_radon = MplCanvas(self, width=3, height=3, dpi=100)
+        self.canvas_radon.move(850,25)
+
+        self.canvas_iradon = MplCanvas(self, width=3, height=3, dpi=100)
+        self.canvas_iradon.move(850,325)
 
 
         #asignamos la funcion asociada al evento textChanged
@@ -69,10 +92,55 @@ class MainWindow(QtWidgets.QMainWindow, Ui_MainWindow):
         self.lineEditInclinacion.textChanged.connect(self.textChangedInclinacion) # double
         self.lineEditInclinacion.setValidator(QtGui.QDoubleValidator(1.0,-1.0,4,notation=QtGui.QDoubleValidator.StandardNotation))
 
+
+        self.lineEditRadonDesde.textChanged.connect(self.textChangedRadonDesde)
+        self.lineEditRadonDesde.setValidator(QtGui.QIntValidator(0,360))
+
+        self.lineEditRadonPaso.textChanged.connect(self.textChangedRadonPaso)
+        self.lineEditRadonPaso.setValidator(QtGui.QIntValidator(0,360))
+
+        self.lineEditRadonHasta.textChanged.connect(self.textChangedRadonHasta)
+        self.lineEditRadonHasta.setValidator(QtGui.QIntValidator(0,360))
+
+        self.lineEditRadonAngulo.textChanged.connect(self.textChangedRadonAngulo)
+        self.lineEditRadonAngulo.setValidator(QtGui.QIntValidator(0,360))
+
+        self.lineEditiRadonDesde.textChanged.connect(self.textChangediRadonDesde)
+        self.lineEditiRadonDesde.setValidator(QtGui.QIntValidator(0,360))
+
+        self.lineEditiRadonPaso.textChanged.connect(self.textChangediRadonPaso)
+        self.lineEditiRadonPaso.setValidator(QtGui.QIntValidator(0,360))
+
+        self.lineEditiRadonHasta.textChanged.connect(self.textChangediRadonHasta)
+        self.lineEditiRadonHasta.setValidator(QtGui.QIntValidator(0,360))
+
+
+
         #asignamos la funcion asociada al evento clicked en push buttons
         self.pushButtonAgregar.clicked.connect(self.onClickAgregar)
         self.pushButtonBorrar.clicked.connect(self.onClickBorrar)
+        
+        self.pushButtonRadonCalcular.clicked.connect(self.onClickRadonCalcular)
+        self.pushButtoniRadonCalcular.clicked.connect(self.onClickiRadonCalcular)
+
+    def onClickRadonCalcular(self):
+        # print(self.displayed_radon.RadonAngulo)
+        theta = np.linspace(self.displayed_radon.RadonDesde, self.displayed_radon.RadonHasta,self.displayed_radon.RadonPaso, endpoint=False)
+        sinogram = radon(self.image_frame.image, theta=theta, circle=True)
+        self.canvas_radon.axes.cla()
+        self.canvas_radon.axes.imshow(sinogram, cmap=plt.cm.Greys_r,extent=(0, 180, 0, sinogram.shape[0]), aspect='auto')
+        self.canvas_radon.draw()
+
+    def onClickiRadonCalcular(self):
+        theta = np.linspace(self.displayed_iradon.iRadonDesde, self.displayed_iradon.iRadonHasta, self.displayed_iradon.iRadonPaso, endpoint=False)
+        sinogram = radon(self.image_frame.image, theta=theta, circle=True)
+        reconstruction_fbp = iradon(sinogram, theta=theta, circle=True)
+        error = reconstruction_fbp - self.image_frame.image
+        self.canvas_iradon.axes.cla()
+        self.canvas_iradon.axes.imshow(reconstruction_fbp, cmap=plt.cm.Greys_r)
+        self.canvas_iradon.draw()
     
+
     def update_plot(self,image):
         self.canvas.axes.cla()  # Clear the canvas.
         self.canvas.axes.imshow(image)
@@ -209,6 +277,57 @@ class MainWindow(QtWidgets.QMainWindow, Ui_MainWindow):
             if(len(self.lineEditInclinacion.text())!=0):
                 input_number = float(self.lineEditInclinacion.text())
                 self.displayed_elipse.Inclinacion = input_number
+
+
+    def textChangedRadonDesde(self):
+        if(self.lineEditRadonDesde.text()=='.'):
+            self.displayed_radon.RadonDesde = 0
+        else:
+            if(len(self.lineEditRadonDesde.text())!=0):
+                input_number = int(self.lineEditRadonDesde.text())
+                self.displayed_radon.RadonDesde = input_number
+    def textChangedRadonPaso(self):
+        if(self.lineEditRadonPaso.text()=='.'):
+            self.displayed_radon.RadonPaso = 0
+        else:
+            if(len(self.lineEditRadonPaso.text())!=0):
+                input_number = int(self.lineEditRadonPaso.text())
+                self.displayed_radon.RadonPaso = input_number
+    def textChangedRadonHasta(self):
+        if(self.lineEditRadonHasta.text()=='.'):
+            self.displayed_radon.RadonHasta = 0
+        else:
+            if(len(self.lineEditRadonHasta.text())!=0):
+                input_number = int(self.lineEditRadonHasta.text())
+                self.displayed_radon.RadonHasta = input_number
+    def textChangedRadonAngulo(self):
+        if(self.lineEditRadonAngulo.text()=='.'):
+            self.displayed_radon.RadonAngulo = 0
+        else:
+            if(len(self.lineEditRadonAngulo.text())!=0):
+                input_number = int(self.lineEditRadonAngulo.text())
+                self.displayed_radon.RadonAngulo = input_number
+    def textChangediRadonDesde(self):
+        if(self.lineEditiRadonDesde.text()=='.'):
+            self.displayed_iradon.iRadonDesde = 0
+        else:
+            if(len(self.lineEditiRadonDesde.text())!=0):
+                input_number = int(self.lineEditiRadonDesde.text())
+                self.displayed_iradon.iRadonDesde = input_number
+    def textChangediRadonPaso(self):
+        if(self.lineEditiRadonPaso.text()=='.'):
+            self.displayed_iradon.iRadonPaso = 0
+        else:
+            if(len(self.lineEditiRadonPaso.text())!=0):
+                input_number = int(self.lineEditiRadonPaso.text())
+                self.displayed_iradon.iRadonPaso = input_number
+    def textChangediRadonHasta(self):
+        if(self.lineEditiRadonHasta.text()=='.'):
+            self.displayed_iradon.iRadonHasta = 0
+        else:
+            if(len(self.lineEditiRadonHasta.text())!=0):
+                input_number = int(self.lineEditiRadonHasta.text())
+                self.displayed_iradon.iRadonHasta = input_number
         
 if __name__ == "__main__":
     app = QtWidgets.QApplication([])

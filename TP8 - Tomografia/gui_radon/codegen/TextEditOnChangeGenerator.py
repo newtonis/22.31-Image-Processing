@@ -1,6 +1,11 @@
 object_names = ['Intensidad','SemiEjeX','SemiEjeY','CentroX','CentroY','Inclinacion']
 object_names_type = ['float','int','int','int','int','float']
 
+radon_object_names = ['RadonDesde','RadonPaso','RadonHasta','RadonAngulo']
+radon_object_names_type = ['int','int','int','int']
+iradon_object_names = ['iRadonDesde','iRadonPaso','iRadonHasta']
+iradon_object_names_type = ['int','int','int']
+
 object_names_push = ['Agregar','Borrar']
 
 
@@ -34,10 +39,38 @@ for el in object_names:
 
 print("")
 
+
+print(" ")
+print("def __init__(self):")
+for el in radon_object_names:
+    print(f"\tself.{el} = None".expandtabs(4))
+
+print("")
+
+arg_str = ""
+for el in radon_object_names:
+    arg_str += el+","
+
+arg_str = arg_str[:-1]
+
+print(f"def __init__(self,{arg_str}):")
+for el in radon_object_names:
+    print(f"\tself.{el} = {el}".expandtabs(4))
+print("")
+
+
 print("#asignamos la funcion asociada al evento textChanged")
 for el in object_names:
     print(f"self.lineEdit{el}.textChanged.connect(self.textChanged{el})".expandtabs(4))
+for el in radon_object_names:
+    print(f"self.lineEdit{el}.textChanged.connect(self.textChanged{el})".expandtabs(4))
+for el in iradon_object_names:
+    print(f"self.lineEdit{el}.textChanged.connect(self.textChanged{el})".expandtabs(4))
 print("")
+
+
+
+
 
 print("#asignamos la funcion asociada al evento clicked en push buttons")
 for el in object_names_push:
@@ -77,4 +110,25 @@ for i,el in enumerate(object_names):
     print(f"\t\tif(len(self.lineEdit{el}.text())!=0):".expandtabs(4))
     print(f"\t\t\tinput_number = {object_names_type[i]}(self.lineEdit{el}.text())".expandtabs(4))
     print(f"\t\t\tself.displayed_elipse.{el} = input_number".expandtabs(4))   
-            
+
+print("")
+
+for i,el in enumerate(radon_object_names):
+    print(f"def textChanged{el}(self):".expandtabs(4))
+    print(f"\tif(self.lineEdit{el}.text()==\'.\'):".expandtabs(4))
+    print(f"\t\tself.displayed_radon.{el} = 0".expandtabs(4))
+    print(f"\telse:".expandtabs(4))
+    print(f"\t\tif(len(self.lineEdit{el}.text())!=0):".expandtabs(4))
+    print(f"\t\t\tinput_number = {radon_object_names_type[i]}(self.lineEdit{el}.text())".expandtabs(4))
+    print(f"\t\t\tself.displayed_radon.{el} = input_number".expandtabs(4))   
+
+
+for i,el in enumerate(iradon_object_names):
+    print(f"def textChanged{el}(self):".expandtabs(4))
+    print(f"\tif(self.lineEdit{el}.text()==\'.\'):".expandtabs(4))
+    print(f"\t\tself.displayed_iradon.{el} = 0".expandtabs(4))
+    print(f"\telse:".expandtabs(4))
+    print(f"\t\tif(len(self.lineEdit{el}.text())!=0):".expandtabs(4))
+    print(f"\t\t\tinput_number = {iradon_object_names_type[i]}(self.lineEdit{el}.text())".expandtabs(4))
+    print(f"\t\t\tself.displayed_iradon.{el} = input_number".expandtabs(4))   
+
