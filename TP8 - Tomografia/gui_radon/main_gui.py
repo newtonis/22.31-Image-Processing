@@ -46,14 +46,10 @@ class MainWindow(QtWidgets.QMainWindow, Ui_MainWindow):
         self.canvas = MplCanvas(self, width=3, height=3, dpi=100)
         self.canvas.move(400,50)
 
-        n_data = 50
-        self.xdata = list(range(n_data))
-        self.ydata = [random.randint(0, 10) for i in range(n_data)]
-
 
         #asignamos la funcion asociada al evento textChanged
         self.lineEditIntensidad.textChanged.connect(self.textChangedIntensidad) # double
-        self.lineEditIntensidad.setValidator(QtGui.QDoubleValidator(1.0,-1.0,4))
+        self.lineEditIntensidad.setValidator(QtGui.QDoubleValidator(1.0,-1.0,4,notation=QtGui.QDoubleValidator.StandardNotation))
         
         self.lineEditSemiEjeX.textChanged.connect(self.textChangedSemiEjeX)
         self.lineEditSemiEjeX.setValidator(QtGui.QIntValidator(-1000,1000))
@@ -71,7 +67,7 @@ class MainWindow(QtWidgets.QMainWindow, Ui_MainWindow):
 
 
         self.lineEditInclinacion.textChanged.connect(self.textChangedInclinacion) # double
-        self.lineEditInclinacion.setValidator(QtGui.QDoubleValidator(1.0,-1.0,4))
+        self.lineEditInclinacion.setValidator(QtGui.QDoubleValidator(1.0,-1.0,4,notation=QtGui.QDoubleValidator.StandardNotation))
 
         #asignamos la funcion asociada al evento clicked en push buttons
         self.pushButtonAgregar.clicked.connect(self.onClickAgregar)
@@ -89,6 +85,7 @@ class MainWindow(QtWidgets.QMainWindow, Ui_MainWindow):
             return True
         else:
             return False
+            
         #escribimos la funcion asociada al evento clicked en push buttons
 
     def updateElipseGraphics(self):
@@ -171,29 +168,47 @@ class MainWindow(QtWidgets.QMainWindow, Ui_MainWindow):
 
     #escribimos la funcion asociada al evento textChanged
     def textChangedIntensidad(self):
-        if(len(self.lineEditIntensidad.text())!=0):
-            input_number = float(self.lineEditIntensidad.text())
-            self.displayed_elipse.Intensidad = input_number
+        if(self.lineEditIntensidad.text()=='.'):
+            self.displayed_elipse.Intensidad = 0
+        else:
+            if(len(self.lineEditIntensidad.text())!=0):
+                input_number = float(self.lineEditIntensidad.text())
+                self.displayed_elipse.Intensidad = input_number
     def textChangedSemiEjeX(self):
-        if(len(self.lineEditSemiEjeX.text())!=0):
-            input_number = int(self.lineEditSemiEjeX.text())
-            self.displayed_elipse.SemiEjeX = input_number
+        if(self.lineEditSemiEjeX.text()=='.'):
+            self.displayed_elipse.SemiEjeX = 0
+        else:
+            if(len(self.lineEditSemiEjeX.text())!=0):
+                input_number = int(self.lineEditSemiEjeX.text())
+                self.displayed_elipse.SemiEjeX = input_number
     def textChangedSemiEjeY(self):
-        if(len(self.lineEditSemiEjeY.text())!=0):
-            input_number = int(self.lineEditSemiEjeY.text())
-            self.displayed_elipse.SemiEjeY = input_number
+        if(self.lineEditSemiEjeY.text()=='.'):
+            self.displayed_elipse.SemiEjeY = 0
+        else:
+            if(len(self.lineEditSemiEjeY.text())!=0):
+                input_number = int(self.lineEditSemiEjeY.text())
+                self.displayed_elipse.SemiEjeY = input_number
     def textChangedCentroX(self):
-        if(len(self.lineEditCentroX.text())!=0):
-            input_number = int(self.lineEditCentroX.text())
-            self.displayed_elipse.CentroX = input_number
+        if(self.lineEditCentroX.text()=='.'):
+            self.displayed_elipse.CentroX = 0
+        else:
+            if(len(self.lineEditCentroX.text())!=0):
+                input_number = int(self.lineEditCentroX.text())
+                self.displayed_elipse.CentroX = input_number
     def textChangedCentroY(self):
-        if(len(self.lineEditCentroY.text())!=0):
-            input_number = int(self.lineEditCentroY.text())
-            self.displayed_elipse.CentroY = input_number
+        if(self.lineEditCentroY.text()=='.'):
+            self.displayed_elipse.CentroY = 0
+        else:
+            if(len(self.lineEditCentroY.text())!=0):
+                input_number = int(self.lineEditCentroY.text())
+                self.displayed_elipse.CentroY = input_number
     def textChangedInclinacion(self):
-        if(len(self.lineEditInclinacion.text())!=0):
-            input_number = float(self.lineEditInclinacion.text())
-            self.displayed_elipse.Inclinacion = input_number
+        if(self.lineEditInclinacion.text()=='.'):
+            self.displayed_elipse.Inclinacion = 0
+        else:
+            if(len(self.lineEditInclinacion.text())!=0):
+                input_number = float(self.lineEditInclinacion.text())
+                self.displayed_elipse.Inclinacion = input_number
         
 if __name__ == "__main__":
     app = QtWidgets.QApplication([])
