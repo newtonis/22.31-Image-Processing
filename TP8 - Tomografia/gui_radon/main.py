@@ -3,23 +3,15 @@ import sys
 from matplotlib.backends.backend_qt5agg import FigureCanvasQTAgg as FigureCanvas
 from matplotlib.figure import Figure
 import numpy as np
+import random
 
-class Canvas(FigureCanvas):
-    def __init__(self, parent = None, width = 5, height = 5, dpi = 100):
+class MplCanvas(FigureCanvas):
+
+    def __init__(self, parent=None, width=5, height=4, dpi=100):
         fig = Figure(figsize=(width, height), dpi=dpi)
         self.axes = fig.add_subplot(111)
- 
-        FigureCanvas.__init__(self, fig)
+        super(MplCanvas, self).__init__(fig)
         self.setParent(parent)
- 
-        #self.plot()
- 
- 
-    def plot(self):
-        x = np.array([50, 30,40])
-        labels = ["Apples", "Bananas", "Melons"]
-        ax = self.figure.add_subplot(111)
-        ax.pie(x, labels=labels) 
 
 class elipse():    
     def __init__(self,Intensidad = None,SemiEjeX=None,SemiEjeY=None,CentroX=None,CentroY=None,Inclinacion=None):
@@ -38,19 +30,25 @@ class MainWindow(QtWidgets.QMainWindow, Ui_MainWindow):
     def __init__(self, *args, **kwargs):
         QtWidgets.QMainWindow.__init__(self, *args, **kwargs)
         self.setupUi(self)
-        
-        # top = 400
-        # left = 400
-        # width = 900
-        # height = 500
-        # self.setGeometry(top, left, width, height)
-        self.elipse_list = []
 
+        self.elipse_list = []
         self.displayed_elipse = elipse()
 
+        
+        self.canvas = MplCanvas(self, width=2, height=2, dpi=100)
+        self.canvas.move(400,100)
+        n_data = 50
+        self.xdata = list(range(n_data))
+        self.ydata = [random.randint(0, 10) for i in range(n_data)]
+        self.update_plot()
 
-        canvas = Canvas(self, width=3, height=2)
-        canvas.move(400,50)
+        self.show()
+
+        # Setup a timer to trigger the redraw by calling update_plot.
+        self.timer = QtCore.QTimer()
+        self.timer.setInterval(100)
+        self.timer.timeout.connect(self.update_plot)
+        self.timer.start()
 
 
         #asignamos la funcion asociada al evento textChanged
@@ -69,6 +67,13 @@ class MainWindow(QtWidgets.QMainWindow, Ui_MainWindow):
         self.pushButtonAgregar.clicked.connect(self.onClickAgregar)
         self.pushButtonBorrar.clicked.connect(self.onClickBorrar)
 
+    def update_plot(self):
+        # Drop off the first y element, append a new one.
+        self.ydata = self.ydata[1:] + [random.randint(0, 10)]
+        self.canvas.axes.cla()  # Clear the canvas.
+        self.canvas.axes.plot(self.xdata, self.ydata, 'r')
+        # Trigger the canvas to update and redraw.
+        self.canvas.draw()
 
     def areAllParamsDisplayedValid(self):
         if(self.validateNumberIntensidad() and self.validateNumberSemiEjeX() and self.validateNumberSemiEjeY()
