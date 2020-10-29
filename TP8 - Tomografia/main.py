@@ -35,8 +35,8 @@ if __name__ == "__main__":
     )
 
     image_frame.add_oval(oval1)
-    image_frame.add_oval(oval2)
-    image_frame.add_oval(oval3)
+#    image_frame.add_oval(oval2)
+#    image_frame.add_oval(oval3)
     image_frame.apply_ovals()
 
     fig = plt.figure(figsize=(14, 10))

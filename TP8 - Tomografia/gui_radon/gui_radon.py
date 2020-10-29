@@ -189,6 +189,9 @@ class Ui_MainWindow(object):
         self.lineEditiRadonHasta.setObjectName("lineEditiRadonHasta")
         self.gridLayout_3.addWidget(self.lineEditiRadonHasta, 2, 0, 1, 1)
         self.horizontalLayout_4.addLayout(self.gridLayout_3)
+        self.pushButtonAngulo = QtWidgets.QPushButton(self.centralwidget)
+        self.pushButtonAngulo.setGeometry(QtCore.QRect(700, 230, 131, 27))
+        self.pushButtonAngulo.setObjectName("pushButtonAngulo")
         MainWindow.setCentralWidget(self.centralwidget)
         self.menubar = QtWidgets.QMenuBar(MainWindow)
         self.menubar.setGeometry(QtCore.QRect(0, 0, 1200, 21))
@@ -228,6 +231,7 @@ class Ui_MainWindow(object):
         self.label_13.setText(_translate("MainWindow", "Desde"))
         self.label_14.setText(_translate("MainWindow", "Paso"))
         self.label_15.setText(_translate("MainWindow", "Hasta"))
+        self.pushButtonAngulo.setText(_translate("MainWindow", "Ver con angulo"))
         self.menuGuiRadon.setTitle(_translate("MainWindow", "GuiRadon"))
 
 

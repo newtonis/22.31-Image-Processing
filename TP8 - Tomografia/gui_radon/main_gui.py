@@ -30,7 +30,7 @@ class elipse():
         self.Inclinacion = Inclinacion
 
     def str_with_params(self):
-        return (f"Int:{self.Intensidad},SemiEjeX:{self.SemiEjeX},SemiEjeY:{self.SemiEjeY},CX:{self.CentroX},CY:{self.CentroY},Inclin:{self.Inclinacion}")
+        return (f"I:{self.Intensidad},X:{self.SemiEjeX},Y:{self.SemiEjeY},CX:{self.CentroX},CY:{self.CentroY},A:{self.Inclinacion}")
 
 
 class radon_params():    
@@ -127,6 +127,20 @@ class MainWindow(QtWidgets.QMainWindow, Ui_MainWindow):
         
         self.pushButtonRadonCalcular.clicked.connect(self.onClickRadonCalcular)
         self.pushButtoniRadonCalcular.clicked.connect(self.onClickiRadonCalcular)
+          
+        self.pushButtonAngulo.clicked.connect(self.onClickRadonAngulo)
+
+    def onClickRadonAngulo(self):
+        theta = self.displayed_radon.RadonAngulo #np.arange(self.displayed_radon.RadonDesde, self.displayed_radon.RadonHasta,self.displayed_radon.RadonPaso)
+        aux_float_image = self.image_frame.image.astype(np.float64)
+        projections  = radon(aux_float_image, theta=[theta])
+        plt.plot(projections)
+        plt.show()
+  
+        # projections  = radon(aux_float_image, theta=[theta])
+        # self.canvas_radon.axes.cla()
+        # self.canvas_radon.axes.imshow(projections)
+        # self.canvas_radon.draw()
 
     def selectionchangeInterpolacion(self,i):
         pass
