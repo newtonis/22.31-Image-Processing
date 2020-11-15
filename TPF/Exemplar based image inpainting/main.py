@@ -4,18 +4,17 @@ from PIL import Image
 import time
 from utils import *
 
-
-img = cv2.imread('output3/imagen.jpeg', 3)# matriz, cada el es un RGB
+img = cv2.imread('output3/imagen.jpeg', cv2.IMREAD_GRAYSCALE)# matriz, cada el es un RGB
 # mascara con area a remover. Zona negra (0,0,0) se remueve, Blanca se deja(255,255,255)
 mask = cv2.imread("output3/mask.jpeg")
 
 #lado de los cuadrados que utilizaremos para rellenar la imagen
-square_size = 5
+square_size = 16
 # guardamos en un arreglo las coordenadas que describen al cuadrado
 square = genSquare(square_size)
 
 # tamanio del cuadrado de busqueda para el parche que reemplaza la posicion a rellenear
-search_square_size = 500
+search_square_size = 32
 
 # cuantas veces buscamos al azar por un parche
 search_times = 100
@@ -28,34 +27,30 @@ def procesar(imagen, mask, iteraciones):
 
     for iteracion in range(iteraciones):
 
-        best_benefit = 0
+        best_benefit = -100 # benefit usulamente da >0
         best_benefit_point = None
 
         shapeMask = jpeg2MatrixMask(mask)
 
         # detectamos el borde de la mascara y conseguimos un arreglo con todos los contornos
         # cnts me da los contornos cerrados (los que se van achicando segun el algoritmo)
-        cnts = cv2.findContours(shapeMask.copy(), cv2.RETR_EXTERNAL, cv2.CHAIN_APPROX_NONE)
+#        cnts = cv2.findContours(image=shapeMask.copy(),mode=cv2.RETR_EXTERNAL,method=cv2.CHAIN_APPROX_NONE)
+        ret, thresh = cv2.threshold(shapeMask.copy(), 127, 255, 0)
+        cnts = cv2.findContours(image=thresh,mode=cv2.RETR_EXTERNAL,method=cv2.CHAIN_APPROX_NONE)
         cnts = imutils.grab_contours(cnts)
 
-        # conseguimos la escala de grises de la imagen (intensidad)
-        grey_scale = cv2.cvtColor(imagen, cv2.COLOR_BGR2GRAY)
-
-        gradient = getGradient(grey_scale)
+        gradient = getGradient(imagen)
         gx, gy = gradient
         grad_norm = np.square(gx) + np.square(gy)
 
-        # for contorno in range(len(cnts)):
-        #     borde = cnts[contorno] #borde tiene los puntos que forman las curvas cerradas
-        #     best_benefit, best_benefit_point = contourAlgorithm(borde, square, shapeMask, c, gradient)
-        for contorno in range(len(cnts)):
+        for borde in cnts:
+            borde = borde.reshape((len(borde),2)) 
 
-            ## necesitamos generar las normales de cada punto del contorno
-            borde = cnts[contorno]
-            border_normal = getBorderNormal(borde)
+            border_normals = getBorderNormals(borde)
+            for idx,border_point in enumerate(borde):
+                x, y = border_point # esto esta bien!
 
-            for index,border_point in enumerate(cnts[contorno]):
-                x, y = border_point[0]
+#                drawRect(imagen, [x,y], 10, 255)
 
                 # consigo la confianza del punto del contorno actual
                 confidence = 0
@@ -66,30 +61,33 @@ def procesar(imagen, mask, iteraciones):
 
                 confidence /= len(square)
 
-                border_norm = border_normal[index]
-                benefit = getBenefit(border_point[0],border_norm,gx,gy ,square,shapeMask,confidence,grad_norm, square_size)
+                border_norm = border_normals[idx]
+                benefit = getPriority(border_point,border_norm,gx,gy ,square,shapeMask,confidence,grad_norm, square_size)
+#                print("benefit esta vez",benefit)
                 # buscamos maximizar el beneficio
                 if benefit > best_benefit:
                     best_benefit = benefit
-                    best_benefit_point = x, y
+                    best_benefit_point = y, x
 
-        if not best_benefit_point:
-            print("No hay mas bordes. Fin")
-            break
+        # no termina 
+        # if not best_benefit_point:
+        #     print("No hay mas bordes. Fin")
+        #     break
 
         # ahora vamos a calcular el parche que minimize la distancia
         minDistPatch = getMinDistPatch(best_benefit_point, search_times, search_square_size, shapeMask,imagen, square_size)
-        copyPattern(imagen, square_size, best_benefit_point, minDistPatch, c, mask)
+        imagen = copyPattern(imagen, square_size, best_benefit_point, minDistPatch, c, mask)
 
         if iteracion % 20 == 0:
             print("Iteracion ", iteracion)
-            im = Image.fromarray(cv2.cvtColor(imagen, cv2.COLOR_BGR2RGB))
+            im2 = Image.fromarray(mask)
+            im2.save("output3/mask" + str(iteracion) + ".jpeg")
+            im = Image.fromarray(imagen)
             im.save("output3/imagen" + str(iteracion) + ".jpeg")
 
 
 start_time = time.time()
-iteraciones = 500
+iteraciones = 20000
 procesar(img, mask,iteraciones)
 end_time = time.time()
 print("se calculo en:", (end_time-start_time)/60, " minutos")
-
