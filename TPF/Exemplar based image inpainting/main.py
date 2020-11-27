@@ -9,7 +9,7 @@ img = cv2.imread('output3/imagen.jpeg', cv2.IMREAD_GRAYSCALE)# matriz, cada el e
 mask = cv2.imread("output3/mask.jpeg")
 
 #lado de los cuadrados que utilizaremos para rellenar la imagen
-square_size = 16
+square_size = 8
 # guardamos en un arreglo las coordenadas que describen al cuadrado
 square = genSquare(square_size)
 
